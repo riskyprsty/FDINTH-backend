@@ -19,6 +19,7 @@ model User {
   username    String        @unique
   token       String
   cookies     String?
+  user_agent  String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Interaction Interaction[]

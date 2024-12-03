@@ -25,11 +25,9 @@ const randomString = (length: number) => {
 
 export const loginByEmailAndPassword = async (
   email: string,
-  password: string
+  password: string,
+  userAgent: string
 ): Promise<{ token: string; cookies: string } | null> => {
-  const userAgent =
-    "Dalvik/2.1.0 (Linux; U; Android 12; Infinix X669 Build/SP1A.210812.016) [FBAN/Orca-Android;FBAV/377.0.0.13.101;FBPN/com.facebook.orca;FBLC/en_US;FBBV/396116327;FBCR/MTN;FBMF/INFINIX;FBBD/Infinix;FBDV/Infinix X669;FBSV/12;FBCA/armeabi-v7a:armeabi;FBDM/{density=2.0,width=720,height=1444};FB_FW/1;]";
-
   try {
     const headers = {
       Host: "b-graph.facebook.com",

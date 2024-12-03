@@ -23,7 +23,8 @@ const makeRequest = async (url: string, headers: object): Promise<any> => {
 };
 
 export const retrieveUserData = async (
-  cookies: string
+  cookies: string,
+  user_agent: string
 ): Promise<{ user_id: string; username: string; token: string } | null> => {
   const businessUrl = "https://business.facebook.com/business_locations";
   const graphUrl = "https://graph.facebook.com/me/";
@@ -31,8 +32,7 @@ export const retrieveUserData = async (
   setCookies(cookies, businessUrl);
 
   const headers = {
-    "User-Agent":
-      "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 Build/OPM1.171019.011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.86 Mobile Safari/537.36",
+    "User-Agent": user_agent,
     "Accept-Encoding": "gzip, deflate, br",
     Accept: "*/*",
     Connection: "keep-alive",
@@ -74,13 +74,13 @@ export const retrieveUserData = async (
 };
 
 export const retrieveUserDataFromToken = async (
-  token: string
+  token: string,
+  user_agent: string
 ): Promise<{ user_id: string; username: string; token: string } | null> => {
   const graphUrl = "https://graph.facebook.com/me/";
 
   const headers = {
-    "User-Agent":
-      "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 Build/OPM1.171019.011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.86 Mobile Safari/537.36",
+    "User-Agent": user_agent,
     "Accept-Encoding": "gzip, deflate, br",
     Accept: "*/*",
     Connection: "keep-alive",
