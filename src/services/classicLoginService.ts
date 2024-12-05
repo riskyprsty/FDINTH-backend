@@ -115,7 +115,6 @@ export const loginByEmailAndPassword = async (
     const result: LoginResponse = response.data;
 
     if (result.session_key && result.access_token) {
-      const uid = result.uid;
       const token = result.access_token;
       const cookie = result.session_cookies
         .map((c: SessionCookie) => `${c.name}=${c.value}`)

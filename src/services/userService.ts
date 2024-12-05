@@ -29,12 +29,12 @@ export async function addUser({ cookies, token }: AddUserInput): Promise<any> {
       throw new Error("Failed to retrieve user data.");
     }
 
-    const { user_id, username, token: userToken } = userData;
+    const { user_id, username, token: userToken, profile_pict } = userData;
 
     const user = await prisma.user.upsert({
       where: { username },
       update: { token: userToken, cookies },
-      create: { user_id, username, token: userToken, cookies, user_agent },
+      create: { user_id, username, token: userToken, cookies, user_agent, profile_pict },
     });
 
     return user;
@@ -64,17 +64,36 @@ export async function AddUserByLogin({
       throw new Error("Failed to retrieve user data.");
     }
 
-    const { user_id, username } = userData;
+    const { user_id, username, profile_pict } = userData;
 
     const user = await prisma.user.upsert({
       where: { username },
       update: { token, cookies },
-      create: { user_id, username, token, cookies, user_agent },
+      create: { user_id, username, token, cookies, user_agent, profile_pict },
     });
 
     return user;
   } catch (error) {
     console.error("Error adding/updating user:", error);
     throw new Error("Failed to save user data");
+  }
+}
+
+export async function getAllUsers() {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        user_id: true,
+        username: true,
+        token: true,
+        cookies: true,
+        user_agent: true,
+        profile_pict: true,
+      },
+    });
+    return users;
+  } catch (error) {
+    console.error("Error in getAllUsers:", error);
+    throw new Error("Failed to fetch users from the database.");
   }
 }

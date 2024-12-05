@@ -20,6 +20,7 @@ model User {
   token       String
   cookies     String?
   user_agent  String
+  profile_pict  String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Interaction Interaction[]
