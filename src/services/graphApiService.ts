@@ -182,7 +182,7 @@ export const fetchFeedPost = async (
       image_large_aspect_height: 264,
       profile_image_size: 45,
       fbstory_tray_preview_height: 265,
-      device_id: "9c1ce3e6-f088-439f-9ad0-1c1063af43bc",
+      device_id: uuidv4(),
       after_home_story_param:
         "FRQVAhsBXAIVFBhcTVRjek16QTNPRFUyTXpveE56TXpNRGM0TlRZek9qRXdPalkzT0RJek1qZzBNRE01T1RZMk9ESXlNVEU2TURvdE9EQTNOVGcwTkRneU16TXlOVGswT0RJeU9nPT0AGwFVHBQVAAA%3D",
       fetch_remix_feedback_metadata: true,
@@ -243,7 +243,9 @@ export const fetchFeedPost = async (
       image_medium_width: 253,
       include_is_currently_live: true,
       question_poll_count: 100,
-      battery_context: '{"is_charging":"true","battery_level":85}',
+      battery_context: `{"is_charging":"${
+        Math.random() < 0.5 ? "true" : "false"
+      }","battery_level":${Math.floor(Math.random() * 100) + 1}}`,
       supported_compression_types: ["ZIP", "TAR_BROTLI"],
       fbstory_tray_preview_width: 149,
       greeting_card_image_size_medium: 253,
@@ -256,7 +258,7 @@ export const fetchFeedPost = async (
           vvt: -1,
           vspos: 0,
           vsid: "3023311443846054175",
-          timestamp: 1733077153,
+          timestamp: new Date(),
           story_type: "IN_FEED_RECOMMENDATION",
           objid: "",
           feed_backend_data_serialized_payloads: "GxVG7AEmAsDzi9bFpO6xA",

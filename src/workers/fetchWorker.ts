@@ -32,6 +32,7 @@ fetchQueue.process(async (job) => {
         await prisma.post.upsert({
           where: { externalId: post.postId }, 
           update: {
+            actorName: post.actorName,
             content: post.message || null,
             hashtags: post.hashtags,
             likersCount: parseInt(post.likersCount, 10),
@@ -39,6 +40,7 @@ fetchQueue.process(async (job) => {
           },
           create: {
             externalId: post.postId,
+            actorName: post.actorName,
             content: post.message || null,
             hashtags: post.hashtags,
             likersCount: parseInt(post.likersCount, 10),
