@@ -34,7 +34,14 @@ export async function addUser({ cookies, token }: AddUserInput): Promise<any> {
     const user = await prisma.user.upsert({
       where: { username },
       update: { token: userToken, cookies },
-      create: { user_id, username, token: userToken, cookies, user_agent, profile_pict },
+      create: {
+        user_id,
+        username,
+        token: userToken,
+        cookies,
+        user_agent,
+        profile_pict,
+      },
     });
 
     return user;
@@ -50,7 +57,11 @@ export async function AddUserByLogin({
 }: AddUserLogin): Promise<any> {
   try {
     const user_agent = getRandomUserAgent();
-    const loginResult = await loginByEmailAndPassword(email, password, user_agent);
+    const loginResult = await loginByEmailAndPassword(
+      email,
+      password,
+      user_agent
+    );
 
     if (!loginResult) {
       throw new Error("Failed to login with email and password");
@@ -100,14 +111,10 @@ export async function getAllUsers() {
 
 export async function validateUser(userId: string) {
   try {
-    const user = await prisma.user.findUnique({where: {user_id: userId}});
-    
-    if (!user) {
-      throw new Error('User not found')
-    }
+    const user = await prisma.user.findUnique({ where: { user_id: userId } });  
     return user;
   } catch (error) {
-    console.error('Error in validateUser: ', error);
-    throw new Error('Failed to validate user');
+    console.error("Error in validateUser: ", error);
+    throw new Error("Failed to validate user");
   }
 }

@@ -26,7 +26,6 @@ fetchQueue.process(async (job) => {
     });
 
     const posts = await fetchFeedPost(user.token, user.user_agent);
-    console.log(posts);
 
     for (const post of posts) {
       try {
