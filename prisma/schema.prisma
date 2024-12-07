@@ -33,7 +33,7 @@ model User {
 
 model Post {
   id          Int       @id @default(autoincrement())
-  externalId  String    // id postingan
+  externalId  String    @unique // ID postingan dari API eksternal
   content     String? 
   hashtags    String[] 
   likersCount Int 

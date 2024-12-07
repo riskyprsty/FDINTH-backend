@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   startFetch
-} from "../controllers/userController.js";
+} from "../controllers/taskController.js";
 import { fetchQueue } from "../config/queue.js";
 
 const router = Router();

@@ -30,8 +30,15 @@ fetchQueue.process(async (job) => {
 
     for (const post of posts) {
       try {
-        await prisma.post.create({
-          data: {
+        await prisma.post.upsert({
+          where: { externalId: post.postId }, 
+          update: {
+            content: post.message || null,
+            hashtags: post.hashtags,
+            likersCount: parseInt(post.likersCount, 10),
+            userId: userId,
+          },
+          create: {
             externalId: post.postId,
             content: post.message || null,
             hashtags: post.hashtags,
@@ -44,12 +51,13 @@ fetchQueue.process(async (job) => {
       }
     }
 
+    // Update status task setelah selesai
     await prisma.task.update({
       where: { id: task.id },
       data: { status: "COMPLETED" },
     });
 
-    return { success: true, postCount: posts.length - 2 }; // Valid Post dikurang 2
+    return { success: true, postCount: posts.length}; 
   } catch (error) {
     if (task) {
       await prisma.task.update({
