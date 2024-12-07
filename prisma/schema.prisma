@@ -14,24 +14,68 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  user_id     String        @unique
-  username    String        @unique
-  token       String
-  cookies     String?
-  user_agent  String
-  profile_pict  String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  Interaction Interaction[]
+  id           Int       @id @default(autoincrement())
+  user_id      String    @unique
+  username     String    @unique
+  token        String
+  cookies      String?
+  user_agent   String
+  profile_pict String?
+  isFetching   Boolean   @default(false) // Apakah fetch diaktifkan
+  canComment   Boolean   @default(true) // Apakah bisa komentar
+  canLike      Boolean   @default(true) // Apakah bisa like
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Posts        Post[] // Relasi ke tabel Post
+  Tasks        Task[] // Relasi ke tabel Task
+  Comment      Comment[]
 }
 
-model Interaction {
-  id        Int      @id @default(autoincrement())
-  type      String
-  content   String
-  status    String   @default("pending")
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+model Post {
+  id          Int       @id @default(autoincrement())
+  externalId  String    // id postingan
+  content     String? 
+  hashtags    String[] 
+  likersCount Int 
+  userId      String // Relasi ke User (viewer)
+  User        User      @relation(fields: [userId], references: [user_id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Comments    Comment[] // Relasi ke tabel Comment
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  externalId String? 
+  content    String 
+  postId     Int 
+  userId     Int 
+  Post       Post     @relation(fields: [postId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Task {
+  id        Int        @id @default(autoincrement())
+  type      TaskType 
+  status    TaskStatus @default(PENDING)
+  userId    String
+  data      Json 
+  User      User       @relation(fields: [userId], references: [user_id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum TaskType {
+  FETCH
+  COMMENT
+  LIKE
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  SUCCESS
+  COMPLETED
+  FAILED
 }
