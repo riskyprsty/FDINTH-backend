@@ -9,7 +9,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "worker": "node dist/workers/fetchWorker.js",
-    "dev": "nodemon",
+    "dev": "concurrently \"nodemon\" \"npm run worker\"",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "@types/winston": "^2.4.4",
+    "concurrently": "^9.1.0",
     "nodemon": "^3.1.7",
     "prisma": "^6.0.1",
     "ts-node": "^10.9.2",

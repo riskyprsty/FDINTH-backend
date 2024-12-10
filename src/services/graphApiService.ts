@@ -357,3 +357,39 @@ export const fetchFeedPost = async (
     return [];
   }
 };
+
+export const postComment = async (
+  token: string,
+  user_agent: string,
+  post_id: string,
+  content: string,
+  atttachment_url?: string
+): Promise<{ id: string } | null> => {
+  const graphUrl = `https://graph.facebook.com/${post_id}/comments/`;
+  const headers = {
+    "User-Agent": user_agent,
+    "Accept-Encoding": "gzip, deflate, br",
+    Accept: "*/*",
+    Connection: "keep-alive",
+  };
+
+  try {
+    const response = await client.post(graphUrl, null, {
+      params: {
+        message: content,
+        attachment_url: atttachment_url,
+        access_token: token,
+      },
+      headers,
+    });
+
+    const result = response.data;
+
+    return {
+      id: result.id,
+    };
+  } catch (error) {
+    console.error("Error posting comment:", error.message);
+    return null;
+  }
+};

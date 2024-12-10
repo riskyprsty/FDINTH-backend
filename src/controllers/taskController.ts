@@ -21,3 +21,23 @@ export async function startFetch(req: Request, res: Response): Promise<void> {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
+
+export async function startComment(req: Request, res: Response): Promise<void> {
+  try {
+    const { postId, userIds, content, attachment_url } = req.body;
+
+    await taskService.enqueueCommentTask(
+      postId,
+      userIds,
+      content,
+      attachment_url
+    );
+
+    res
+      .status(200)
+      .json({ success: true, message: "Comment task enqueued", userIds });
+  } catch (error) {
+    console.error("Error in startComment:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
