@@ -19,7 +19,7 @@ fetchQueue.process(async (job) => {
         type: "FETCH",
         status: "IN_PROGRESS",
         data: {
-          token: user.token,
+          user_id: user.user_id,
           fetchTime: new Date(),
         },
       },

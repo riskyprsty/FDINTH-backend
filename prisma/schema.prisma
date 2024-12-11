@@ -14,22 +14,23 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  user_id      String    @unique
-  username     String    @unique
-  token        String
-  cookies      String?
-  user_agent   String
-  profile_pict String?
-  isFetching   Boolean   @default(false) // Apakah fetch diaktifkan
-  canComment   Boolean   @default(true) // Apakah bisa komentar
-  canLike      Boolean   @default(true) // Apakah bisa like
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  Posts        Post[] // Relasi ke tabel Post
-  Tasks        Task[] // Relasi ke tabel Task
-  Comment      Comment[]
-  Like         Like[]
+  id            Int            @id @default(autoincrement())
+  user_id       String         @unique
+  username      String         @unique
+  token         String
+  cookies       String?
+  user_agent    String
+  profile_pict  String?
+  isFetching    Boolean        @default(false) // Apakah fetch diaktifkan
+  canComment    Boolean        @default(true) // Apakah bisa komentar
+  canLike       Boolean        @default(true) // Apakah bisa like
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Posts         Post[] // Relasi ke tabel Post
+  Tasks         Task[] // Relasi ke tabel Task
+  Comment       Comment[]
+  Like          Like[]
+  SelectedUsers SelectedUsers?
 }
 
 model Post {
@@ -47,16 +48,16 @@ model Post {
 }
 
 model Comment {
-  id         Int      @id @default(autoincrement())
-  externalId String   @unique
-  content    String
-  attachment_url  String?
-  postId     String
-  userId     String
-  createdAt  DateTime @default(now())
-  Post       Post     @relation(fields: [postId], references: [externalId], onDelete: Cascade)
-  User       User     @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  Like       Like[]
+  id             Int      @id @default(autoincrement())
+  externalId     String   @unique
+  content        String
+  attachment_url String?
+  postId         String
+  userId         String
+  createdAt      DateTime @default(now())
+  Post           Post     @relation(fields: [postId], references: [externalId], onDelete: Cascade)
+  User           User     @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  Like           Like[]
 }
 
 model Like {
@@ -78,6 +79,16 @@ model Task {
   User      User       @relation(fields: [userId], references: [user_id])
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+}
+
+model SelectedUsers {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  taskType  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User @relation(fields: [userId], references: [user_id])
 }
 
 enum TaskType {
