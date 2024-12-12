@@ -12,3 +12,4 @@ export const commentQueue: Queue = new Bull("comment-task", {
   redis: redisConfig,
 });
 export const likeQueue: Queue = new Bull("like-task", { redis: redisConfig });
+  

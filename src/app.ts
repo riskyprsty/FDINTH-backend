@@ -11,6 +11,7 @@ import { fetchQueue, commentQueue } from "./config/queue.js";
 import userRoutes from "./routes/users.js";
 import taskRoutes from "./routes/tasks.js";
 import postRoutes from "./routes/posts.js";
+import selectedUserRouters from "./routes/selecteduser.js"
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.use("/admin/queues", serverAdapter.getRouter());
 
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
-
 app.use("/api/posts", postRoutes);
+app.use("/api/selecteduser", selectedUserRouters);
 
 export default app;
