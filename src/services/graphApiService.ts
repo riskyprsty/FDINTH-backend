@@ -393,3 +393,41 @@ export const postComment = async (
     return null;
   }
 };
+
+export const actionLike = async (
+  token: string,
+  user_agent: string,
+  object_id: string,
+): Promise<{ success: boolean } | null> => {
+  const graphUrl = `https://graph.facebook.com/${object_id}/likes/`;
+  const headers = {
+    "User-Agent": user_agent,
+    "Accept-Encoding": "gzip, deflate, br",
+    Accept: "*/*",
+    Connection: "keep-alive",
+  };
+
+  try {
+    const response = await client.post(graphUrl, null, {
+      params: {
+        access_token: token,
+      },
+      headers,
+    });
+
+    const result = response.data;
+
+    if (result !== true) {
+      console.error("Failed to like object")
+    }
+
+    return {
+      success: result,
+    };
+  } catch (error) {
+    console.error("Error when liking object:", error.message);
+    return null;
+  }
+};
+
+

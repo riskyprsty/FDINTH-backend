@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { fetchQueue, commentQueue, likeQueue } from "../config/queue.js";
-import { fetchFeedPost, postComment } from "../services/graphApiService.js";
+import {
+  actionLike,
+  fetchFeedPost,
+  postComment,
+} from "../services/graphApiService.js";
 
 const prisma = new PrismaClient();
 
@@ -159,6 +163,8 @@ likeQueue.process(async (job) => {
   const { commentIds, userIds } = job.data;
 
   try {
+    const results = [];
+
     for (const commentId of commentIds) {
       for (const userId of userIds) {
         const user = await prisma.user.findUnique({
@@ -178,21 +184,45 @@ likeQueue.process(async (job) => {
           },
         });
 
-        await prisma.like.create({
-          data: {
-            commentId,
-            userId,
-          },
-        });
+        try {
+          const like = await actionLike(user.token, user.user_agent, commentId);
 
-        await prisma.task.update({
-          where: { id: task.id },
-          data: { status: "COMPLETED" },
-        });
+          if (!like) throw new Error(`Failed to like object ${commentId}`);
+          await prisma.like.create({
+            data: {
+              commentId,
+              userId,
+            },
+          });
+
+          console.log(
+            `Likes added for Object ID ${commentId} by User ID ${userId}`
+          );
+
+          await prisma.task.update({
+            where: { id: task.id },
+            data: { status: "COMPLETED" },
+          });
+
+          results.push({
+            userId,
+            success: true,
+            liked_object: commentId,
+          });
+        } catch (error) {
+          console.error(`Error liking object for User ID ${userId}:`, error);
+
+          await prisma.task.update({
+            where: { id: task.id },
+            data: { status: "FAILED" },
+          });
+
+          results.push({ userId, success: false, error: error.message });
+        }
       }
     }
 
-    console.log(`Likes added for comments: ${commentIds}`);
+    return { success: true, results };
   } catch (error) {
     if (task) {
       await prisma.task.update({

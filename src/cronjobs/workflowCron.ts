@@ -14,7 +14,7 @@ async function runWorkflow() {
   const fetchUsers = await prisma.selectedUsers.findMany({
     where: {
       taskTypes: {
-        has: "FETCH", 
+        has: "FETCH",
       },
     },
   });
@@ -36,16 +36,16 @@ async function runWorkflow() {
   const latestPosts = await prisma.post.findMany({
     where: {
       createdAt: {
-        gte: twoHoursAgo, 
+        gte: twoHoursAgo,
       },
       NOT: {
-        hasBeenCommented: true, 
+        hasBeenCommented: true,
       },
     },
     orderBy: {
       createdAt: "desc",
     },
-    take: 10, 
+    take: 3,
   });
 
   const commentUsers = await prisma.selectedUsers.findMany({
@@ -74,7 +74,11 @@ async function runWorkflow() {
             content: commentData?.content || "Default Comment",
             attachment_url: commentData?.attachment_url || null,
           },
-          { jobId: `comment-${user.userId}-${post.externalId}` }
+          {
+            jobId: `comment-${user.userId || "unknown"}-${
+              post.externalId || "unknown"
+            }`,
+          }
         );
       }
 
@@ -89,7 +93,7 @@ async function runWorkflow() {
   const latestComments = await prisma.comment.findMany({
     where: {
       createdAt: {
-        gte: twoHoursAgo, 
+        gte: twoHoursAgo,
       },
     },
   });
@@ -117,7 +121,11 @@ async function runWorkflow() {
             commentIds: [comment.externalId],
             userIds: [user.userId],
           },
-          { jobId: `like-${user.userId}-${comment.externalId}` }
+          {
+            jobId: `like-${user.userId || "unknown"}-${
+              comment.externalId || "unknown"
+            }`,
+          }
         );
       }
     }
@@ -127,7 +135,7 @@ async function runWorkflow() {
 }
 
 // **Penjadwalan Cronjob**
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
   try {
     console.log(`[${new Date().toISOString()}] Menjalankan cronjob workflow.`);
     await runWorkflow();
