@@ -6,39 +6,50 @@ export async function handleAddSelectedUsers(
   res: Response
 ): Promise<void> {
   try {
-    const { userIds, taskType } = req.body;
+    const { userIds, taskTypes } = req.body;
 
     if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
       res.status(400).json({
         success: false,
         message: "User IDs must be a non-empty array.",
       });
-
       return;
     }
 
-    if (!taskType) {
+    if (!taskTypes || !Array.isArray(taskTypes) || taskTypes.length === 0) {
       res.status(400).json({
         success: false,
-        message: "Task type is required",
+        message: "Task types must be a non-empty array.",
       });
       return;
     }
 
     const validTaskTypes = ["FETCH", "COMMENT", "LIKE"];
 
-    if (!validTaskTypes.includes(taskType)) {
+    // Validasi setiap task type
+    const invalidTaskTypes = taskTypes.filter(
+      (taskType) => !validTaskTypes.includes(taskType)
+    );
+
+    if (invalidTaskTypes.length > 0) {
       res.status(400).json({
         success: false,
-        message: "Task type must be COMMENT, FETCH, or LIKE",
+        message: `Invalid task types: ${invalidTaskTypes.join(
+          ", "
+        )}. Must be FETCH, COMMENT, or LIKE.`,
       });
       return;
     }
 
-    const result = await selectedUserService.addSelectedUser(userIds, taskType);
+    const result = await selectedUserService.addSelectedUser(
+      userIds,
+      taskTypes
+    );
     res.status(201).json({
       success: true,
-      message: `${result.count} users added as selected users for task ${taskType}`,
+      message: `${userIds.length} users added with task types: ${taskTypes.join(
+        ", "
+      )}`,
     });
   } catch (error) {
     console.error("Error in handleAddSelectedUsers:", error);
@@ -49,35 +60,3 @@ export async function handleAddSelectedUsers(
   }
 }
 
-export async function handleReassignUser(req: Request, res: Response): Promise<void> {
-  const { userIds, taskType } = req.body;
-
-  if (!Array.isArray(userIds) || userIds.length === 0) {
-    res.status(400).json({
-      success: false,
-      message: "User IDs must be a non-empty array.",
-    });
-
-    return;
-  }
-
-  if (!["FETCH", "COMMENT", "LIKE"].includes(taskType)) {
-    res.status(400).json({
-      success: false,
-      message: "Task type must be one of: FETCH, COMMENT, LIKE.",
-    });
-
-    return;
-  }
-
-  try {
-    await selectedUserService.reassignSelectedUser(userIds, taskType);
-    res.status(200).json({
-      success: true,
-      message: "Users successfully reassigned with new task type.",
-    });
-  } catch (error) {
-    console.error("Error in reassignSelectedUser:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-}

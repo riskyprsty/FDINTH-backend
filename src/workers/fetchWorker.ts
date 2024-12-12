@@ -155,22 +155,51 @@ commentQueue.process(async (job) => {
 });
 
 likeQueue.process(async (job) => {
+  let task;
   const { commentIds, userIds } = job.data;
 
   try {
     for (const commentId of commentIds) {
       for (const userId of userIds) {
+        const user = await prisma.user.findUnique({
+          where: { user_id: userId },
+        });
+        if (!user) throw new Error(`User not found: ${userId}`);
+
+        task = await prisma.task.create({
+          data: {
+            userId: userId,
+            type: "LIKE",
+            status: "IN_PROGRESS",
+            data: {
+              user_ids: userIds,
+              fetchTime: new Date(),
+            },
+          },
+        });
+
         await prisma.like.create({
           data: {
             commentId,
             userId,
           },
         });
+
+        await prisma.task.update({
+          where: { id: task.id },
+          data: { status: "COMPLETED" },
+        });
       }
     }
 
     console.log(`Likes added for comments: ${commentIds}`);
   } catch (error) {
+    if (task) {
+      await prisma.task.update({
+        where: { id: task.id },
+        data: { status: "FAILED" },
+      });
+    }
     console.error("Error in like worker:", error);
     throw error;
   }

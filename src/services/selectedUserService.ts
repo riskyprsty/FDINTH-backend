@@ -3,20 +3,24 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const selectedUserService = {
-  async addSelectedUser(userIds: string[], taskType: string) {
-    const data = userIds.map((userId) => ({ userId, taskType }));
-    return await prisma.selectedUsers.createMany({
-      data,
-      skipDuplicates: true,
-    });
-  },
+  async addSelectedUser(userIds: string[], taskTypes: string[]) {
+    const data = userIds.map((userId) => ({
+      userId,
+      taskTypes: taskTypes,
+    }));
 
-  async reassignSelectedUser(userIds: string[], taskType: string) {
-    const operations = userIds.map((userId) =>
+    const operations = data.map((item) =>
       prisma.selectedUsers.upsert({
-        where: { userId },
-        update: { taskType },
-        create: { userId, taskType },
+        where: { userId: item.userId },
+        update: {
+          taskTypes: {
+            set: item.taskTypes, 
+          },
+        },
+        create: {
+          userId: item.userId,
+          taskTypes: item.taskTypes,
+        },
       })
     );
 
