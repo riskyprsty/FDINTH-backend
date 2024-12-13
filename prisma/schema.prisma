@@ -55,6 +55,7 @@ model Comment {
   attachment_url String?
   postId         String
   userId         String
+  hasBeenLiked  Boolean @default(false)
   createdAt      DateTime @default(now())
   Post           Post     @relation(fields: [postId], references: [externalId], onDelete: Cascade)
   User           User     @relation(fields: [userId], references: [user_id], onDelete: Cascade)

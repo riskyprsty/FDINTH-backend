@@ -95,7 +95,14 @@ async function runWorkflow() {
       createdAt: {
         gte: twoHoursAgo,
       },
+      NOT: {
+        hasBeenLiked: true,
+      },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 10,
   });
 
   const likeUsers = await prisma.selectedUsers.findMany({
@@ -128,6 +135,11 @@ async function runWorkflow() {
           }
         );
       }
+
+      await prisma.comment.update({
+        where: { externalId: comment.externalId },
+        data: { hasBeenLiked: true },
+      });
     }
   }
 

@@ -99,7 +99,7 @@ commentQueue.process(async (job) => {
           status: "IN_PROGRESS",
           data: {
             user_ids: userIds,
-            fetchTime: new Date(),
+            target_postId: post.externalId,
           },
         },
       });
@@ -179,7 +179,7 @@ likeQueue.process(async (job) => {
             status: "IN_PROGRESS",
             data: {
               user_ids: userIds,
-              fetchTime: new Date(),
+              target_commentId: commentId,
             },
           },
         });
