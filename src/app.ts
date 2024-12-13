@@ -12,6 +12,7 @@ import userRoutes from "./routes/users.js";
 import taskRoutes from "./routes/tasks.js";
 import postRoutes from "./routes/posts.js";
 import selectedUserRouters from "./routes/selecteduser.js"
+import templateRoutes from "./routes/template.js"
 
 dotenv.config();
 
@@ -33,5 +34,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/selecteduser", selectedUserRouters);
+app.use("/api/template", templateRoutes);
 
 export default app;
