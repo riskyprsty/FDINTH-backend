@@ -45,7 +45,7 @@ async function runWorkflow() {
     orderBy: {
       createdAt: "desc",
     },
-    take: 3,
+    take: 5, 
   });
 
   const commentUsers = await prisma.selectedUsers.findMany({
@@ -60,32 +60,38 @@ async function runWorkflow() {
     console.log("Tidak ada post terbaru atau user untuk tugas COMMENT.");
   } else {
     console.log(
-      `Menambahkan ${
-        latestPosts.length * commentUsers.length
-      } tugas ke commentQueue.`
+      `Menambahkan tugas ke commentQueue untuk ${latestPosts.length} postingan dan ${commentUsers.length} user.`
     );
-    for (const post of latestPosts) {
-      for (const user of commentUsers) {
-        const commentData = await prisma.commentTemplate.findFirst();
-        await commentQueue.add(
-          {
-            postId: post.externalId,
-            userIds: [user.userId],
-            content: commentData?.content || "Default Comment",
-            attachment_url: commentData?.attachment_url || null,
-          },
-          {
-            jobId: `comment-${user.userId || "unknown"}-${
-              post.externalId || "unknown"
-            }`,
-          }
-        );
-      }
 
+    let userIndex = 0;
+
+    for (const post of latestPosts) {
+      const user = commentUsers[userIndex];
+
+      const commentData = await prisma.commentTemplate.findFirst();
+
+      await commentQueue.add(
+        {
+          postId: post.externalId,
+          userIds: [user.userId],
+          content: commentData?.content || "Default Comment",
+          attachment_url: commentData?.attachment_url || null,
+        },
+        {
+          jobId: `comment-${user.userId || "unknown"}-${
+            post.externalId || "unknown"
+          }`,
+        }
+      );
+
+      // Tandai postingan sudah dikomentari
       await prisma.post.update({
         where: { externalId: post.externalId },
         data: { hasBeenCommented: true },
       });
+
+      // Pindah ke user berikutnya 
+      userIndex = (userIndex + 1) % commentUsers.length;
     }
   }
 

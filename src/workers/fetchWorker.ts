@@ -125,7 +125,7 @@ commentQueue.process(async (job) => {
           },
         });
 
-        console.log(`Comment added for Post ID ${postId} by User ID ${userId}`);
+        console.log(`Comment with ID ${comment.id} added for Post ID ${postId} by User ID ${userId}`);
 
         await prisma.task.update({
           where: { id: task.id },
@@ -134,7 +134,7 @@ commentQueue.process(async (job) => {
 
         results.push({ userId, success: true, comment_id: comment.id });
       } catch (error) {
-        console.error(`Error processing comment for User ID ${userId}:`, error);
+        console.error(`Error processing comment for User ID ${userId} and Target PostID ${postId}:`, error);
 
         await prisma.task.update({
           where: { id: task.id },
@@ -210,7 +210,7 @@ likeQueue.process(async (job) => {
             liked_object: commentId,
           });
         } catch (error) {
-          console.error(`Error liking object for User ID ${userId}:`, error);
+          console.error(`Error liking object for User ID ${userId} and Comment ID ${commentId}:`, error);
 
           await prisma.task.update({
             where: { id: task.id },
