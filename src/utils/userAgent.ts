@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export function getRandomUserAgent(): string {
-  const filePath = path.resolve(process.cwd(), "config/useragent.json");
+  const filePath = path.resolve(process.cwd(), "src/config/useragent.json");
   const userAgents: string[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
   const randomIndex = Math.floor(Math.random() * userAgents.length);
   return userAgents[randomIndex];
