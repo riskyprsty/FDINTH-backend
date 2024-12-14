@@ -153,7 +153,7 @@ async function runWorkflow() {
 }
 
 // **Penjadwalan Cronjob**
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("0 */2 * * *", async () => {
   try {
     console.log(`[${new Date().toISOString()}] Menjalankan cronjob workflow.`);
     await runWorkflow();
