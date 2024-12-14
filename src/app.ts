@@ -44,10 +44,10 @@ app.use(bodyParser.json());
 
 app.use("/admin/queues", serverAdapter.getRouter());
 
-app.use("/api/users", userRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/selecteduser", selectedUserRouters);
-app.use("/api/template", templateRoutes);
+app.use("/users", userRoutes);
+app.use("/tasks", taskRoutes);
+app.use("/posts", postRoutes);
+app.use("/selecteduser", selectedUserRouters);
+app.use("/template", templateRoutes);
 
 export default app;
