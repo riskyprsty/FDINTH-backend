@@ -77,7 +77,7 @@ model Task {
   type      TaskType
   status    TaskStatus @default(PENDING)
   userId    String
-  data      Json
+  target    String
   User      User       @relation(fields: [userId], references: [user_id])
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

@@ -22,10 +22,7 @@ fetchQueue.process(async (job) => {
         userId: userId,
         type: "FETCH",
         status: "IN_PROGRESS",
-        data: {
-          user_id: user.user_id,
-          fetchTime: new Date(),
-        },
+        target: "FEED",
       },
     });
 
@@ -97,10 +94,7 @@ commentQueue.process(async (job) => {
           userId: userId,
           type: "COMMENT",
           status: "IN_PROGRESS",
-          data: {
-            user_ids: userIds,
-            target_postId: post.externalId,
-          },
+          target: post.externalId,
         },
       });
 
@@ -125,7 +119,9 @@ commentQueue.process(async (job) => {
           },
         });
 
-        console.log(`Comment with ID ${comment.id} added for Post ID ${postId} by User ID ${userId}`);
+        console.log(
+          `Comment with ID ${comment.id} added for Post ID ${postId} by User ID ${userId}`
+        );
 
         await prisma.task.update({
           where: { id: task.id },
@@ -134,7 +130,10 @@ commentQueue.process(async (job) => {
 
         results.push({ userId, success: true, comment_id: comment.id });
       } catch (error) {
-        console.error(`Error processing comment for User ID ${userId} and Target PostID ${postId}:`, error);
+        console.error(
+          `Error processing comment for User ID ${userId} and Target PostID ${postId}:`,
+          error
+        );
 
         await prisma.task.update({
           where: { id: task.id },
@@ -177,10 +176,7 @@ likeQueue.process(async (job) => {
             userId: userId,
             type: "LIKE",
             status: "IN_PROGRESS",
-            data: {
-              user_ids: userIds,
-              target_commentId: commentId,
-            },
+            target: commentId,
           },
         });
 
@@ -210,7 +206,10 @@ likeQueue.process(async (job) => {
             liked_object: commentId,
           });
         } catch (error) {
-          console.error(`Error liking object for User ID ${userId} and Comment ID ${commentId}:`, error);
+          console.error(
+            `Error liking object for User ID ${userId} and Comment ID ${commentId}:`,
+            error
+          );
 
           await prisma.task.update({
             where: { id: task.id },
