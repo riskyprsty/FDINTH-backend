@@ -11,8 +11,8 @@ import { fetchQueue, commentQueue, likeQueue } from "./config/queue.js";
 import userRoutes from "./routes/users.js";
 import taskRoutes from "./routes/tasks.js";
 import postRoutes from "./routes/posts.js";
-import selectedUserRouters from "./routes/selecteduser.js"
-import templateRoutes from "./routes/template.js"
+import selectedUserRouters from "./routes/selecteduser.js";
+import templateRoutes from "./routes/template.js";
 
 dotenv.config();
 
@@ -20,12 +20,26 @@ const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath("/admin/queues");
 
 const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
-  queues: [new BullAdapter(fetchQueue), new BullAdapter(commentQueue), new BullAdapter(likeQueue)],
+  queues: [
+    new BullAdapter(fetchQueue),
+    new BullAdapter(commentQueue),
+    new BullAdapter(likeQueue),
+  ],
   serverAdapter: serverAdapter,
 });
+
 const app: Application = express();
 
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+const corsOptions = {
+  origin: FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 
 app.use("/admin/queues", serverAdapter.getRouter());
